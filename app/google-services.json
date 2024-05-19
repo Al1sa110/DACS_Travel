@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "871054480510",
+    "project_id": "travel-f4cbd",
+    "storage_bucket": "travel-f4cbd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:871054480510:android:9b7bfd45e0c4ae9c65342f",
+        "android_client_info": {
+          "package_name": "com.example.travel"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAE3oKUbGMNBTn8wYPQEjFqbHfXFWKk3kw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

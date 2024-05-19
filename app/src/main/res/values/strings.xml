@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Travel</string>
+    <string name="empty_information">Please enter complete information</string>
+    <string name="incorrect">Incorrect email or password</string>
+    <string name="password_do_not_match">Passwords do not match</string>
+    <string name="successful">Successful</string>
+</resources>
