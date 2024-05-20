@@ -195,7 +195,7 @@ fun DetailsScreen(navController: NavController) {
                             Button(onClick = {
                                 // Time Picker Dialog
                                 TimePickerDialog(context, { _, hourOfDay, minute ->
-                                    selectedTime = "$hourOfDay:$minute"
+                                    selectedTime = String.format("%02d:%02d", hourOfDay, minute)
                                     Toast.makeText(context, "Time: $selectedTime", Toast.LENGTH_SHORT).show()
                                 }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true).show()
                             }) {
@@ -212,43 +212,50 @@ fun DetailsScreen(navController: NavController) {
                         }
 
                         Button(onClick = {
-                            if (selectedDate.isNotBlank() && selectedTime.isNotBlank()) {
-                                val database = FirebaseDatabase.getInstance("https://travel-f4cbd-default-rtdb.asia-southeast1.firebasedatabase.app")
-                                val refData: DatabaseReference = database.reference.child("Location")
+                            if (user != null){
+                                if(user.email != null){
+                                    if (selectedDate.isNotBlank() && selectedTime.isNotBlank()) {
+                                        val database = FirebaseDatabase.getInstance("https://travel-f4cbd-default-rtdb.asia-southeast1.firebasedatabase.app")
+                                        val refData: DatabaseReference = database.reference.child("Location")
 
-                                refData.orderByChild("user").equalTo(user?.email).addListenerForSingleValueEvent(object :
-                                    ValueEventListener {
-                                    override fun onDataChange(snapshot: DataSnapshot) {
-                                        var isConflict = false
-                                        for (data in snapshot.children) {
-                                            val location = data.getValue(LocationData::class.java)
-                                            if (location != null && location.date == selectedDate && location.time == selectedTime) {
-                                                isConflict = true
-                                                break
+                                        refData.orderByChild("user").equalTo(user?.email).addListenerForSingleValueEvent(object :
+                                            ValueEventListener {
+                                            override fun onDataChange(snapshot: DataSnapshot) {
+                                                var isConflict = false
+                                                for (data in snapshot.children) {
+                                                    val location = data.getValue(LocationData::class.java)
+                                                    if (location != null && location.date == selectedDate && location.time == selectedTime) {
+                                                        isConflict = true
+                                                        break
+                                                    }
+                                                }
+                                                if (isConflict) {
+                                                    Toast.makeText(context, "Date and time are already in use", Toast.LENGTH_SHORT).show()
+                                                } else {
+                                                    // No conflict, add the location
+                                                    val locationData = LocationData(
+                                                        name = data.name ?: "",
+                                                        full_address = data.full_address ?: "",
+                                                        date = selectedDate,
+                                                        time = selectedTime,
+                                                        user = user?.email ?: "User"
+                                                    )
+                                                    refData.push().setValue(locationData)
+                                                    Toast.makeText(context, "Added", Toast.LENGTH_SHORT).show()
+                                                }
                                             }
-                                        }
-                                        if (isConflict) {
-                                            Toast.makeText(context, "Date and time are already in use", Toast.LENGTH_SHORT).show()
-                                        } else {
-                                            // No conflict, add the location
-                                            val locationData = LocationData(
-                                                name = data.name ?: "",
-                                                full_address = data.full_address ?: "",
-                                                date = selectedDate,
-                                                time = selectedTime,
-                                                user = user?.email ?: "User"
-                                            )
-                                            refData.push().setValue(locationData)
-                                            Toast.makeText(context, "Added", Toast.LENGTH_SHORT).show()
-                                        }
-                                    }
 
-                                    override fun onCancelled(error: DatabaseError) {
-                                        Toast.makeText(context, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+                                            override fun onCancelled(error: DatabaseError) {
+                                                Toast.makeText(context, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+                                            }
+                                        })
+                                    } else {
+                                        Toast.makeText(context, "Please select a date and time", Toast.LENGTH_SHORT).show()
                                     }
-                                })
-                            } else {
-                                Toast.makeText(context, "Please select a date and time", Toast.LENGTH_SHORT).show()
+                                }
+                            }else {
+                                Toast.makeText(context, "Please login first", Toast.LENGTH_SHORT).show()
+                                navController.navigate("login")
                             }
                         }) {
                             Text(text = "Add")

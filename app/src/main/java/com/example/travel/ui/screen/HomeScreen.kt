@@ -107,12 +107,26 @@ fun HomeScreen(
                     modifier = Modifier
                         .padding(bottom = 7.dp)
                 ){
-                    Button(onClick = { authController.signOut() }) {
-                        Text(text = "Sign Out")
+                    if (user != null) {
+                        if (user.email != null) {
+                            Button(onClick = { authController.signOut() }) {
+                                Text(text = "Sign Out")
+                            }
+                        }
+                    }else {
+                        Button(onClick = { navController.navigate("login") }) {
+                            Text(text = "Sign In")
+                        }
                     }
 
-                    Button(onClick = { navController.navigate("manager") }) {
-                        Text(text = "Manager")
+                    if (user != null) {
+                        if (user.email != null) {
+                            Button(onClick = { navController.navigate("manager") }) {
+                                Text(text = "Manager")
+                            }
+                        }
+                    }else {
+                        //
                     }
 
                     Button(onClick = { navController.navigate("home") }) {
