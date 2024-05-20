@@ -19,5 +19,5 @@ data class Data(
     val types: List<String>,
     val website: String,
     val website_full: String,
-    val working_hours: WorkingHours
+    val working_hours: Any
 )

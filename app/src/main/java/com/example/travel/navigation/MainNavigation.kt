@@ -9,15 +9,17 @@ import androidx.navigation.navArgument
 import com.example.travel.ui.screen.DetailsScreen
 import com.example.travel.ui.screen.HomeScreen
 import com.example.travel.ui.screen.LoginScreen
+import com.example.travel.ui.screen.SearchScreen
 import com.example.travel.ui.screen.SignupScreen
 import com.example.travel.ui.screen.TimeManagerScreen
 import com.example.travel.viewModel.AuthViewModel
-import com.example.travel.viewModel.ProvinceDetailViewModel
+import com.example.travel.viewModel.ProvinceViewModel
 
 @Composable
 fun MainNavigation() {
     val navController = rememberNavController()
     val user = AuthViewModel().user
+    val provinceViewModel: ProvinceViewModel = ProvinceViewModel()
 
     NavHost(
         navController = navController,
@@ -28,7 +30,7 @@ fun MainNavigation() {
                             }
     ) {
        composable("home"){
-            HomeScreen(navController)
+           HomeScreen(navController = navController)
        }
         composable("login"){
             LoginScreen(navController = navController)
@@ -37,10 +39,13 @@ fun MainNavigation() {
             SignupScreen(navController = navController)
         }
         composable("details/{id}", arguments = listOf(navArgument("id"){type = NavType.StringType})){
-            DetailsScreen(navController)
+            DetailsScreen(navController = navController)
+        }
+        composable("search/{query}", arguments = listOf(navArgument("query"){type = NavType.StringType})){
+            SearchScreen(navController = navController)
         }
         composable("manager"){
-            TimeManagerScreen(navController)
+            TimeManagerScreen(navController = navController)
         }
     }
 }

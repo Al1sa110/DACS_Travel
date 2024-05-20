@@ -32,7 +32,14 @@ private val retrofit1 = Retrofit.Builder()
 interface ProvinceRepository {
     @GET("/searchmaps.php")
     suspend fun getDetail(
-        @Query("query") query: String = "restaurant",
+        @Query("query") query: String? = "hotel and restaurant",
+        @Query("limit") limit: Int = 30,
+        @Query("offset") offset: Int = 0,
+        @Query("lang") lang: String = "en",
+        @Query("country") country: String = "us",
+        @Query("zoom") zoom: String = "13",
+        @Query("lat") lat: String = "51.5072",
+        @Query("ln") ln: String = "0.12"
     ): ProvinceDetail ? = null
 }
 

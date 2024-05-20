@@ -19,6 +19,5 @@ data class Data(
     val timezone: String,
     val types: List<String>,
     val verified: Boolean,
-    val website: String,
-    val working_hours: Any
+    val website: String
 )

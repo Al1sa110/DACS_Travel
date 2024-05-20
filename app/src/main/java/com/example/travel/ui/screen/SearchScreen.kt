@@ -30,49 +30,29 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.travel.controller.AuthController
-import com.example.travel.state.HomeUiState
 import com.example.travel.viewModel.AuthViewModel
-import com.example.travel.viewModel.ProvinceViewModel
-
-
-//@Composable
-//fun StateHandler(
-//    homeUiState: HomeUiState,
-//    navController: NavController
-//) {
-//    when (homeUiState) {
-//        is HomeUiState.Loading -> LoadingHomeScreen()
-//        is HomeUiState.Success -> HomeScreen(navController)
-//        is HomeUiState.Error -> ErrorHomeScreen()
-//    }
-//
-//}
-//
-//@Composable
-//fun LoadingHomeScreen() {
-//    Spacer(modifier = Modifier.height(400.dp))
-//    Text(text = "Loading...")
-//}
-//
-//@Composable
-//fun ErrorHomeScreen() {
-//    Text(text = "Error...")
-//}
-
+import com.example.travel.viewModel.SearchViewModel
 
 @Composable
-fun HomeScreen(
-    navController: NavController
-) {
+fun SearchScreen(navController: NavController) {
     val context = LocalContext.current
     val authController = AuthController(context,navController)
-    val provinceViewModel: ProvinceViewModel = viewModel()
+
     val authViewModel: AuthViewModel = viewModel()
     val user = authViewModel.user
+
+    val currentBackStackEntry = navController.currentBackStackEntry
+    val factory = SearchFactory(currentBackStackEntry?.arguments?.getString("query").toString())
+    val searchViewModel: SearchViewModel = viewModel(factory = factory)
+    val searchfor = currentBackStackEntry?.arguments?.getString("query").toString()
+
     var search by remember { mutableStateOf("") }
+
     Scaffold() {
         LazyColumn(
             modifier = Modifier
@@ -90,6 +70,11 @@ fun HomeScreen(
                         .fillMaxWidth()
                         .padding(bottom = 16.dp)
                 )
+                Text(
+                    text = "Search for: $searchfor",
+                    style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(5.dp))
                 Button(
                     onClick = {
                         if (search.isNotEmpty()) {
@@ -105,7 +90,7 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier
-                        .padding(bottom = 7.dp)
+                        .padding(bottom = 16.dp)
                 ){
                     Button(onClick = { authController.signOut() }) {
                         Text(text = "Sign Out")
@@ -121,24 +106,23 @@ fun HomeScreen(
                 }
                 if (user != null) {
                     if (user?.email != null) {
-                        Text(
-                            text = "Welcome, ${user?.email ?: "User"}!",
-                            fontWeight = FontWeight.Bold
-                        )
+                        Text(text = "Welcome, ${user?.email ?: "User"}!")
                     }
                 }else {
                     Text(text = "No user signed in")
                 }
+
             }
-            if(provinceViewModel.provinceResult?.data.isNullOrEmpty()){
+            if(searchViewModel.provinceResult?.data.isNullOrEmpty()){
                 item {
                     Spacer(modifier = Modifier.height(10.dp))
-                    Text(text = "No data found",
+                    Text(
+                        text = "No data found",
                         style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold
                     )
                 }
             }else {
-                items(provinceViewModel.provinceResult?.data.orEmpty()) { data ->
+                items(searchViewModel.provinceResult?.data.orEmpty()) { data ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -170,5 +154,14 @@ fun HomeScreen(
                 }
             }
         }
+    }
+}
+class SearchFactory(private val query: String) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(SearchViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return SearchViewModel(query) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
