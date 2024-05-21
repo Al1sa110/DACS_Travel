@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.dialog.ForgotPasswordDialog
+import com.example.travel.dialog.ForgotPasswordDialog
 import com.example.travel.R
 import com.example.travel.controller.AuthController
 import com.example.travel.viewModel.AuthViewModel

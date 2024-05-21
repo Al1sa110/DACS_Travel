@@ -32,7 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.dialog.ResetPasswordDialog
+import com.example.travel.dialog.ResetPasswordDialog
 import com.example.travel.controller.AuthController
 import com.example.travel.state.HomeUiState
 import com.example.travel.viewModel.AuthViewModel
