@@ -203,6 +203,12 @@ fun ListItem(location: LocationData, onDelete: () -> Unit, onUpdate: (String, St
             Button(onClick = {
                 if (selectedDate.isNotBlank() && selectedTime.isNotBlank()) {
                     onUpdate(selectedDate, selectedTime)
+                }else if (selectedDate.isNotBlank()) {
+                    selectedTime = location.time.toString()
+                    onUpdate(selectedDate, selectedTime)
+                }else if (selectedTime.isNotBlank()) {
+                    selectedDate = location.date.toString()
+                    onUpdate(selectedDate, selectedTime)
                 }else {
                     Toast.makeText(context, "Please select a date and time", Toast.LENGTH_SHORT).show()
                 }

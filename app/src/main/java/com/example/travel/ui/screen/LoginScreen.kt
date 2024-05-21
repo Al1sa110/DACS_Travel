@@ -103,6 +103,14 @@ fun LoginScreen(navController: NavController) {
             )
         }
 
+        Row {
+            Text(
+                modifier = Modifier
+                    .clickable { navController.navigate("home") },
+                text = "Login as guest"
+            )
+        }
+
         if (showDialog) {
             ForgotPasswordDialog(
                 onConfirm = { inputEmail ->

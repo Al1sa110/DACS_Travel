@@ -38,6 +38,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.travel.model.FavouriteData
 import com.example.travel.model.LocationData
 import com.example.travel.viewModel.AuthViewModel
 import com.example.travel.viewModel.ProvinceDetailViewModel
@@ -162,7 +163,7 @@ fun DetailsScreen(navController: NavController) {
                             Spacer(modifier = Modifier.height(8.dp))
                             data.description.forEach { description ->
                                 Text(
-                                    text = description ?: "",
+                                    text = formatDescription(description),
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                             }
@@ -261,6 +262,51 @@ fun DetailsScreen(navController: NavController) {
                             Text(text = "Add")
                         }
 
+                        Button(onClick = {
+                            if (user != null){
+                                if(user.email != null){
+                                        val database = FirebaseDatabase.getInstance("https://travel-f4cbd-default-rtdb.asia-southeast1.firebasedatabase.app")
+                                        val refData: DatabaseReference = database.reference.child("Favourite")
+                                        var name = data.name
+                                        refData.orderByChild("fuser").equalTo(user?.email).addListenerForSingleValueEvent(object :
+                                            ValueEventListener {
+                                            override fun onDataChange(snapshot: DataSnapshot) {
+                                                var isConflict = false
+                                                for (data in snapshot.children) {
+                                                    val favourite = data.getValue(FavouriteData::class.java)
+                                                    if (favourite != null && favourite.fname == name) {
+                                                        isConflict = true
+                                                        break
+                                                    }
+                                                }
+                                                if (isConflict) {
+                                                    Toast.makeText(context, "Location are already in use", Toast.LENGTH_SHORT).show()
+                                                } else {
+                                                    // No conflict, add the location
+                                                    val favouriteData = FavouriteData(
+                                                        fname = data.name ?: "",
+                                                        fuser = user?.email ?: "User",
+                                                        faddress = data.full_address ?:"",
+                                                        frate = data.rating.toString(),
+                                                        fid = data.business_id,
+                                                    )
+                                                    refData.push().setValue(favouriteData)
+                                                    Toast.makeText(context, "Added to favourite", Toast.LENGTH_SHORT).show()
+                                                }
+                                            }
+                                            override fun onCancelled(error: DatabaseError) {
+                                                Toast.makeText(context, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+                                            }
+                                        })
+                                }
+                            }else {
+                                Toast.makeText(context, "Please login first", Toast.LENGTH_SHORT).show()
+                                navController.navigate("login")
+                            }
+                        }) {
+                            Text(text = "Favorite")
+                        }
+
                     }
                 }
             }
@@ -293,4 +339,12 @@ fun formatWorkingHours(hours: String?): String {
         .replace(" ", "")
 
     return formattedHours
+}
+
+fun formatDescription(des: String?): String {
+    if (des.isNullOrEmpty()) return ""
+    var formattedDes = des
+        .replace("t", "")
+
+    return formattedDes
 }

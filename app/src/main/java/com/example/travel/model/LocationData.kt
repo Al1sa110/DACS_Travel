@@ -6,5 +6,5 @@ data class LocationData(
     val date: String? = null,
     val time: String? = null,
     val user: String = "",
-    var id: String = ""
+    var id: String = "KEY"
 )

@@ -109,7 +109,7 @@ fun HomeScreen(navController: NavController) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier
-                        .padding(bottom = 7.dp)
+                        .padding(bottom = 2.dp)
                 ){
                     if (user != null) {
                         if (user.email != null) {
@@ -144,8 +144,17 @@ fun HomeScreen(navController: NavController) {
                     modifier = Modifier
                         .padding(bottom = 7.dp)
                 ) {
-                    Button(onClick = { showDialog = true }) {
-                        Text(text = "Reset password")
+                    if (user != null) {
+                        if (user.email != null) {
+                            Button(onClick = { navController.navigate("favourite") }) {
+                                Text(text = "Favourite")
+                            }
+                            Button(onClick = { showDialog = true }) {
+                                Text(text = "Reset password")
+                            }
+                        }
+                    }else {
+                        // do nothing
                     }
                 }
 
@@ -178,7 +187,9 @@ fun HomeScreen(navController: NavController) {
                         )
                     }
                 }else {
-                    Text(text = "No user signed in")
+                    Text(
+                        text = "You're signed in as guest",
+                        fontWeight = FontWeight.Bold)
                 }
             }
             if(provinceViewModel.provinceResult?.data.isNullOrEmpty()){

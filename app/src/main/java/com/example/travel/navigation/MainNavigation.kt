@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.travel.ui.screen.DetailsScreen
+import com.example.travel.ui.screen.FavouriteScreen
 import com.example.travel.ui.screen.HomeScreen
 import com.example.travel.ui.screen.LoginScreen
 import com.example.travel.ui.screen.SearchScreen
@@ -45,6 +46,9 @@ fun MainNavigation() {
         }
         composable("manager"){
             TimeManagerScreen(navController = navController)
+        }
+        composable("favourite"){
+            FavouriteScreen(navController = navController)
         }
     }
 }
