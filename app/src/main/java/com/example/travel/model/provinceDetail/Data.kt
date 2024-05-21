@@ -17,7 +17,7 @@ data class Data(
     val review_count: Int,
     val state: String? = null,
     val timezone: String,
-    val types: List<String>,
+    val types: List<String>? = null,
     val verified: Boolean,
     val website: String
 )

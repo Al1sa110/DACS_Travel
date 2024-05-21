@@ -99,31 +99,31 @@ fun DetailsScreen(navController: NavController) {
                         Text(text = data.name ?: "", style = MaterialTheme.typography.headlineSmall)
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Rating: ${data.rating ?: ""}",
+                            text = "Rating: ${data.rating ?: "No value"}",
                             style = MaterialTheme.typography.bodyMedium
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(text = "Type:", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
-                        data.types.forEach { type ->
+                        data.types?.forEach { type ->
                             Text(
-                                text = type ?: "",
+                                text = type ?: "No value",
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "City: ${data.full_address ?: ""}",
+                            text = "City: ${data.full_address ?: "No value"}",
                             style = MaterialTheme.typography.bodyMedium
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Phone: ${data.phone_number ?: ""}",
+                            text = "Phone: ${data.phone_number ?: "No value"}",
                             style = MaterialTheme.typography.bodyMedium
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Time zone: ${data.timezone ?: ""}",
+                            text = "Time zone: ${data.timezone ?: "No value"}",
                             style = MaterialTheme.typography.bodyMedium
                         )
                         Spacer(modifier = Modifier.height(8.dp))
@@ -282,8 +282,15 @@ class DetailsFactory(private val id: String) : ViewModelProvider.Factory {
 
 fun formatWorkingHours(hours: String?): String {
     if (hours.isNullOrEmpty()) return ""
-    var formattedHours = hours.replace("{", "").replace("}", "").replace("[]", "No value")
-    formattedHours = formattedHours.replace(",", ",\n")
+    var formattedHours = hours
+        .replace("{", "")
+        .replace("}", "")
+        .replace("[]", "No value")
+        .replace("PM,", "PM |")
+        .replace("=[", ":")
+        .replace("]", "")
+        .replace(",", "\n")
+        .replace(" ", "")
 
     return formattedHours
 }

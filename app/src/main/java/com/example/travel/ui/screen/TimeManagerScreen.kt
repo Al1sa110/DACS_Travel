@@ -28,8 +28,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.travel.model.LocationData
+import com.example.travel.viewModel.AuthViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -43,11 +45,12 @@ import java.util.Locale
 @Composable
 fun TimeManagerScreen(navController: NavController) {
     val context = LocalContext.current
+
     val database = FirebaseDatabase.getInstance("https://travel-f4cbd-default-rtdb.asia-southeast1.firebasedatabase.app")
     val refData: DatabaseReference = database.reference.child("Location")
 
-    val currentUser = FirebaseAuth.getInstance().currentUser
-    val currentUserEmail = currentUser?.email
+    val authViewModel: AuthViewModel = viewModel()
+    val currentUserEmail = authViewModel.user?.email
 
     var locationList by remember { mutableStateOf(listOf<LocationData>()) }
 

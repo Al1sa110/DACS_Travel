@@ -32,10 +32,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.dialog.ResetPasswordDialog
 import com.example.travel.controller.AuthController
 import com.example.travel.state.HomeUiState
 import com.example.travel.viewModel.AuthViewModel
 import com.example.travel.viewModel.ProvinceViewModel
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 
 //@Composable
@@ -64,15 +67,15 @@ import com.example.travel.viewModel.ProvinceViewModel
 
 
 @Composable
-fun HomeScreen(
-    navController: NavController
-) {
+fun HomeScreen(navController: NavController) {
     val context = LocalContext.current
     val authController = AuthController(context,navController)
     val provinceViewModel: ProvinceViewModel = viewModel()
     val authViewModel: AuthViewModel = viewModel()
     val user = authViewModel.user
     var search by remember { mutableStateOf("") }
+    var showDialog by remember { mutableStateOf(false) }
+
     Scaffold() {
         LazyColumn(
             modifier = Modifier
@@ -101,6 +104,7 @@ fun HomeScreen(
                 ) {
                     Text(text = "Search")
                 }
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -126,13 +130,46 @@ fun HomeScreen(
                             }
                         }
                     }else {
-                        //
+                        // do nothing
                     }
 
                     Button(onClick = { navController.navigate("home") }) {
                         Text(text = "Refresh")
                     }
                 }
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier
+                        .padding(bottom = 7.dp)
+                ) {
+                    Button(onClick = { showDialog = true }) {
+                        Text(text = "Reset password")
+                    }
+                }
+
+                if (showDialog) {
+                    ResetPasswordDialog(
+                        onConfirm = {
+                            if (user != null && user.email != null) {
+                                authViewModel.auth.sendPasswordResetEmail(user.email!!)
+                                    .addOnCompleteListener{
+                                        if (it.isSuccessful) {
+                                            Toast.makeText(context, "Reset mail has been sent to your email", Toast.LENGTH_SHORT).show()
+                                        }else {
+                                            Toast.makeText(context, "Failed to send reset mail", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                            } else {
+                                Toast.makeText(context, "Please sign in first", Toast.LENGTH_SHORT).show()
+                            }
+                            showDialog = false
+                        },
+                        onDismiss = { showDialog = false }
+                    )
+                }
+
                 if (user != null) {
                     if (user?.email != null) {
                         Text(

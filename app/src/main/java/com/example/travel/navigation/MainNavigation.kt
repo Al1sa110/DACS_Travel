@@ -13,18 +13,17 @@ import com.example.travel.ui.screen.SearchScreen
 import com.example.travel.ui.screen.SignupScreen
 import com.example.travel.ui.screen.TimeManagerScreen
 import com.example.travel.viewModel.AuthViewModel
-import com.example.travel.viewModel.ProvinceViewModel
 
 @Composable
 fun MainNavigation() {
     val navController = rememberNavController()
-    val user = AuthViewModel().user
-    val provinceViewModel: ProvinceViewModel = ProvinceViewModel()
+    val user = AuthViewModel().user?.email
+  //  val provinceViewModel: ProvinceViewModel = ProvinceViewModel()
 
     NavHost(
         navController = navController,
         startDestination = if(user == null){
-                                "home"
+                                "login"
                             } else {
                                 "home"
                             }
