@@ -35,8 +35,19 @@ class AuthController(context: Context,navController: NavController) {
         Toast.LENGTH_SHORT
     )
 
-    fun login(email:String,password:String){
+    private val toastInvaild = Toast.makeText(
+        context,
+        "Invaild password",
+        Toast.LENGTH_SHORT
+    )
 
+    private val toastEmailInvaild = Toast.makeText(
+        context,
+        "Email already exists or invalid",
+        Toast.LENGTH_SHORT
+    )
+
+    fun login(email:String,password:String){
         if(email.isEmpty()||password.isEmpty()){
             toastEmpty.show()
         } else {
@@ -62,16 +73,21 @@ class AuthController(context: Context,navController: NavController) {
         }
         else {
             if(password == confirmPassword) {
-                auth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            val user = auth.currentUser
-                            updateUI(user)
-                            navController.navigate("home")
-                        } else {
-                            updateUI(null)
+                if (password.length >= 6 && confirmPassword.length >= 6) {
+                    auth.createUserWithEmailAndPassword(email, password)
+                        .addOnCompleteListener {
+                            if (it.isSuccessful) {
+                                val user = auth.currentUser
+                                updateUI(user)
+                                navController.navigate("home")
+                            } else {
+                                toastEmailInvaild.show()
+                                updateUI(null)
+                            }
                         }
-                    }
+                } else {
+                    toastInvaild.show()
+                }
             } else {
                 toastNotMatch.show()
             }
