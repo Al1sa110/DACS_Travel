@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -143,18 +144,19 @@ fun DetailsScreen(navController: NavController) {
                                 text = "State: ${data.state?: "No value"}",
                                 style = MaterialTheme.typography.bodyMedium
                             )
-
-
                         Spacer(modifier = Modifier.height(8.dp))
-                        Column {
-                            data.photos?.forEach { photo ->
-                                AsyncImage(
-                                    model = photo.url,
-                                    contentDescription = "",
-                                    modifier = Modifier
-                                        .height(200.dp),
-                                    contentScale = ContentScale.FillBounds
-                                )
+                        LazyRow {
+                            item {
+                                data.photos?.forEach { photo ->
+                                    AsyncImage(
+                                        model = photo.url,
+                                        contentDescription = "",
+                                        modifier = Modifier
+                                            .height(300.dp)
+                                            .width(300.dp),
+                                        contentScale = ContentScale.FillBounds
+                                    )
+                                }
                             }
                         }
                         Spacer(modifier = Modifier.height(8.dp))

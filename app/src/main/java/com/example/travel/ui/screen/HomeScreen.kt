@@ -137,7 +137,6 @@ fun HomeScreen(navController: NavController) {
                         Text(text = "Refresh")
                     }
                 }
-
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),

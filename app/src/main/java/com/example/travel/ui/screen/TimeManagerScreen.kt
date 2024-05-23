@@ -27,6 +27,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -140,13 +142,26 @@ fun ListItem(location: LocationData, onDelete: () -> Unit, onUpdate: (String, St
     val calendar = Calendar.getInstance()
     var selectedDate by remember { mutableStateOf("") }
     var selectedTime by remember { mutableStateOf("") }
+
+    val currentDateTime = Calendar.getInstance().time
+    val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+    val locationDateTime = dateFormat.parse("${location.date} ${location.time}")
+    val isPast = locationDateTime?.before(currentDateTime) == true
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = "Name: ${location.name}")
+            Text(
+                text = "Name: ${location.name}",
+                style = if(isPast){
+                    TextStyle(textDecoration = TextDecoration.LineThrough)
+                } else{
+                    TextStyle.Default
+                }
+            )
             Text(text = "Address: ${location.full_address}")
             Text(text = "Date: ${location.date}")
             Text(text = "Time: ${location.time}")
@@ -159,17 +174,17 @@ fun ListItem(location: LocationData, onDelete: () -> Unit, onUpdate: (String, St
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-            Button(onClick = {
-                // Date Picker Dialog
-                DatePickerDialog(context, { _, year, month, dayOfMonth ->
-                    selectedDate = "$dayOfMonth/${month + 1}/$year"
-                    Toast.makeText(context, "Date: $selectedDate", Toast.LENGTH_SHORT).show()
-                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
-            }) {
-                Text(text = "Pick Date")
-            }
+                Button(onClick = {
+                    // Date Picker Dialog
+                    DatePickerDialog(context, { _, year, month, dayOfMonth ->
+                        selectedDate = "$dayOfMonth/${month + 1}/$year"
+                        Toast.makeText(context, "Date: $selectedDate", Toast.LENGTH_SHORT).show()
+                    }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+                }) {
+                    Text(text = "Pick Date")
+                }
 
-            Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(16.dp))
 
                 Box(
                     contentAlignment = Alignment.Center
@@ -203,13 +218,13 @@ fun ListItem(location: LocationData, onDelete: () -> Unit, onUpdate: (String, St
             Button(onClick = {
                 if (selectedDate.isNotBlank() && selectedTime.isNotBlank()) {
                     onUpdate(selectedDate, selectedTime)
-                }else if (selectedDate.isNotBlank()) {
+                } else if (selectedDate.isNotBlank()) {
                     selectedTime = location.time.toString()
                     onUpdate(selectedDate, selectedTime)
-                }else if (selectedTime.isNotBlank()) {
+                } else if (selectedTime.isNotBlank()) {
                     selectedDate = location.date.toString()
                     onUpdate(selectedDate, selectedTime)
-                }else {
+                } else {
                     Toast.makeText(context, "Please select a date and time", Toast.LENGTH_SHORT).show()
                 }
             }) {
